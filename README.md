@@ -3,7 +3,10 @@
 Slim and simple concurrency-supported Http Server Mock.
 Still under slow development :)
 
-**Playground.Program.cs**
+## NuGet
+https://www.nuget.org/packages/Viki.HttpMockSlim/0.0.1-beta
+
+## Playground Program.cs
 ```cs
 static void Main()
 {
