@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <title>HttpMockSlim</title>
+    <id>Viki.HttpMockSlim</id>
+    <version></version>
+    <authors>Vytautas Klumbys</authors>
+    <owners></owners>
+    <description>Still in development, used for internal load tests to mock some services.</description>
+	<summary>Basic HttpServer mock with concurrency support and no admin-rights needed.</summary>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes></releaseNotes>
+	<licenseUrl>https://github.com/Vycka/HttpMockSlim/blob/master/LICENSE</licenseUrl>
+	<projectUrl>https://github.com/Vycka/HttpMockSlim</projectUrl>
+    <copyright>2016</copyright>
+    <tags>simple slim http server mock</tags>
+  </metadata>
+</package>

@@ -12,7 +12,7 @@ namespace HttpMockSlim.HttpListener
         private System.Net.HttpListener _httpServer;
 
         #endregion
-   
+
         #region Properties
 
         public bool IsRunning => _httpServer?.IsListening == true;
@@ -27,7 +27,7 @@ namespace HttpMockSlim.HttpListener
             _httpServer.Prefixes.Add(uriPrefix);
             _httpServer.Start();
 
-            _httpServer.BeginGetContext(HandleRequest, new Tuple<HttpListenerServer, Action<Request, Response>>(this, sessionReceived));
+            _httpServer.BeginGetContext(HandleRequest,new SessionState(this, sessionReceived));
         }
 
 
@@ -37,7 +37,7 @@ namespace HttpMockSlim.HttpListener
                 return;
 
             _httpServer.Stop();
-            _httpServer = null;
+            //_httpServer = null;
         }
 
         #endregion
@@ -46,18 +46,27 @@ namespace HttpMockSlim.HttpListener
 
         private static void HandleRequest(IAsyncResult result)
         {
-            var state = (Tuple<HttpListenerServer, Action<Request, Response>>)result.AsyncState;
-            System.Net.HttpListener server = state.Item1._httpServer;
+            SessionState state = (SessionState)result.AsyncState;
+            System.Net.HttpListener server = state.Server._httpServer;
 
-            HttpListenerContext context = server.EndGetContext(result);
-            server.BeginGetContext(HandleRequest, state);
+            try
+            {
+                HttpListenerContext context = server.EndGetContext(result);
+                server.BeginGetContext(HandleRequest, state);
 
-            Request request = MapRequest(context.Request);
-            Response response = new Response();
+                Request request = MapRequest(context.Request);
+                Response response = new Response();
 
-            state.Item2.Invoke(request, response);
+                state.SessionReceived(request, response);
 
-            WriteResponse(context.Response, response);
+                WriteResponse(context.Response, response);
+            }
+            catch (Exception)
+            {
+                if (server.IsListening)
+                    throw;
+            }
+            
         }
 
         private static Request MapRequest(HttpListenerRequest clientRequest)
@@ -90,7 +99,6 @@ namespace HttpMockSlim.HttpListener
             response.Body.CopyTo(httpResponse.OutputStream);
         }
 
-
         #endregion
 
         #region IDisposable
@@ -105,8 +113,21 @@ namespace HttpMockSlim.HttpListener
         protected virtual void Dispose(bool disposing)
         {
             Stop();
+            _httpServer = null;
         }
 
         #endregion
+
+        private class SessionState
+        {
+            public SessionState(HttpListenerServer server, Action<Request, Response> sessionReceived)
+            {
+                Server = server;
+                SessionReceived = sessionReceived;
+            }
+
+            public readonly HttpListenerServer Server;
+            public readonly Action<Request, Response> SessionReceived;
+        }
     }
 }
