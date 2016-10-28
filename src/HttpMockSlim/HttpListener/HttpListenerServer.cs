@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using HttpMockSlim.Model;
 
 namespace HttpMockSlim.HttpListener
@@ -27,7 +28,7 @@ namespace HttpMockSlim.HttpListener
             _httpServer.Prefixes.Add(uriPrefix);
             _httpServer.Start();
 
-            _httpServer.BeginGetContext(HandleRequest,new SessionState(this, sessionReceived));
+            _httpServer.BeginGetContext(HandleRequest, new SessionState(this, sessionReceived));
         }
 
 
@@ -46,7 +47,7 @@ namespace HttpMockSlim.HttpListener
 
         private static void HandleRequest(IAsyncResult result)
         {
-            SessionState state = (SessionState)result.AsyncState;
+            SessionState state = (SessionState) result.AsyncState;
             System.Net.HttpListener server = state.Server._httpServer;
 
             try
@@ -54,12 +55,8 @@ namespace HttpMockSlim.HttpListener
                 HttpListenerContext context = server.EndGetContext(result);
                 server.BeginGetContext(HandleRequest, state);
 
-                Request request = MapRequest(context.Request);
-                Response response = new Response();
-
-                state.SessionReceived(request, response);
-
-                WriteResponse(context.Response, response);
+                Task task = new Task(() => HandleSession(context, state), TaskCreationOptions.LongRunning);
+                task.Start();
             }
             catch (Exception)
             {
@@ -67,6 +64,16 @@ namespace HttpMockSlim.HttpListener
                     throw;
             }
             
+        }
+
+        private static void HandleSession(HttpListenerContext context, SessionState state)
+        {
+            Request request = MapRequest(context.Request);
+            Response response = new Response();
+
+            state.SessionReceived(request, response);
+
+            WriteResponse(context.Response, response);
         }
 
         private static Request MapRequest(HttpListenerRequest clientRequest)

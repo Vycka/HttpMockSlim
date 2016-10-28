@@ -9,7 +9,7 @@ namespace HttpMockSlim.Playground
         static void Main()
         {
             HttpMock httpMock = new HttpMock();
-            httpMock.Start("http://localhost:50000/");
+            httpMock.Start("http://localhost:8000/");
 
             httpMock.Add("GET", "/test", (request, response) =>
             {

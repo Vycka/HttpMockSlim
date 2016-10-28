@@ -6,13 +6,23 @@
     <version></version>
     <authors>Vytautas Klumbys</authors>
     <owners></owners>
-    <description>Still in development, used for internal load tests to mock some services.</description>
-	<summary>Basic HttpServer mock with concurrency support and no admin-rights needed.</summary>
+    <description>Still in development, created to be used in internal load-tests to mock some http services
+Cons:
+ Developed with these requirements in mind:
+  * No dependencies
+  * No admin-rights necessary
+  * No dependencies on other nugets
+  * Concurrency
+  * Easy to mock responses with funcs or with custom IHttpHandlerMock
+Cons:
+ * Currently only StatusCode/ContentType/ResponseBody can be mocked.</description>
+	<summary>Basic HttpServer mock.
+Requires no admin-rights and has concurrency support.</summary>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes></releaseNotes>
 	<licenseUrl>https://github.com/Vycka/HttpMockSlim/blob/master/LICENSE</licenseUrl>
 	<projectUrl>https://github.com/Vycka/HttpMockSlim</projectUrl>
     <copyright>2016</copyright>
-    <tags>simple slim http server mock</tags>
+    <tags>simple basic slim http server mock httplistener</tags>
   </metadata>
 </package>
