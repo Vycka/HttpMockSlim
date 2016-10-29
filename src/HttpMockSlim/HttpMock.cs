@@ -119,10 +119,7 @@ namespace HttpMockSlim
 
         private bool TryHandle(Request request, Response response)
         {
-
-
             bool handled = false;
-
 
             // ReSharper disable once ForCanBeConvertedToForeach
             // Doing conversion breaks first-added-first-tested order
