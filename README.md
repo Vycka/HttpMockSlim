@@ -1,10 +1,18 @@
 # HttpMockSlim
 
-Slim and simple concurrency-supported Http Server Mock.
-Still under slow development :)
+Slim and simple  Http Server Mock.
+Still in development, created to be used in internal load-tests to mock some http services
+
+Developed with these requirements in mind:
+* No admin-rights necessary
+* No dependencies on other nugets
+* Concurrency
+* Easy to mock responses with funcs or with custom IHttpHandlerMock
+Cons:
+* Currently only StatusCode/ContentType/ResponseBody can be mocked.
 
 ## NuGet
-https://www.nuget.org/packages/Viki.HttpMockSlim/0.0.1-beta
+https://www.nuget.org/packages/Viki.HttpMockSlim
 
 ## Playground Program.cs
 ```cs
