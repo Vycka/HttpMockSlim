@@ -11,12 +11,13 @@ namespace HttpMockSlim.HttpListener
         #region Fields
 
         private System.Net.HttpListener _httpServer;
+        private volatile bool _running = false;
 
         #endregion
 
         #region Properties
 
-        public bool IsRunning => _httpServer?.IsListening == true;
+        public bool IsRunning => _running;
 
         #endregion
 
@@ -24,9 +25,13 @@ namespace HttpMockSlim.HttpListener
 
         public void Start(string uriPrefix, Action<Request, Response> sessionReceived)
         {
+
+
             _httpServer = new System.Net.HttpListener();
             _httpServer.Prefixes.Add(uriPrefix);
             _httpServer.Start();
+
+            _running = true;
 
             _httpServer.BeginGetContext(HandleRequest, new SessionState(this, sessionReceived));
         }
@@ -36,6 +41,8 @@ namespace HttpMockSlim.HttpListener
         {
             if (!IsRunning)
                 return;
+
+            _running = false;
 
             _httpServer.Stop();
             //_httpServer = null;
@@ -60,7 +67,7 @@ namespace HttpMockSlim.HttpListener
             }
             catch (Exception)
             {
-                if (server.IsListening)
+                if (state.Server.IsRunning)
                     throw;
             }
             

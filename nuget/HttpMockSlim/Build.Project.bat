@@ -1,7 +1,7 @@
 @ECHO OFF
 cd %~dp0
 
-SET minorVersion="0.3-beta"
+SET minorVersion="0.4-beta"
 SET majorVersion="0"
 
 SET projectID=HttpMockSlim
