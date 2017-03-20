@@ -23,10 +23,8 @@ namespace HttpMockSlim.HttpListener
 
         #region Start/Stop
 
-        public void Start(string uriPrefix, Action<Request, Response> sessionReceived)
+        public void Start(string uriPrefix, Action<HttpListenerContext> sessionReceived)
         {
-
-
             _httpServer = new System.Net.HttpListener();
             _httpServer.Prefixes.Add(uriPrefix);
             _httpServer.Start();
@@ -75,43 +73,9 @@ namespace HttpMockSlim.HttpListener
 
         private static void HandleSession(HttpListenerContext context, SessionState state)
         {
-            Request request = MapRequest(context.Request);
-            Response response = new Response();
-
-            state.SessionReceived(request, response);
-
-            WriteResponse(context.Response, response);
+            state.SessionReceived(context);
         }
 
-        private static Request MapRequest(HttpListenerRequest clientRequest)
-        {
-            Request result = new Request
-            {
-                Method = clientRequest.HttpMethod,
-                RawUrl = clientRequest.RawUrl
-            };
-
-            if (clientRequest.HasEntityBody)
-            {
-                using (Stream body = clientRequest.InputStream)  
-                using (StreamReader reader = new StreamReader(body, clientRequest.ContentEncoding))
-                {
-                    result.Body = reader.ReadToEnd();
-                }
-            }
-
-            return result;
-        }
-
-        private static void WriteResponse(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = response.StatusCode;
-            httpResponse.ContentType = response.ContentType;
-
-            httpResponse.ContentLength64 += response.Body.Length;
-
-            response.Body.CopyTo(httpResponse.OutputStream);
-        }
 
         #endregion
 
@@ -134,14 +98,14 @@ namespace HttpMockSlim.HttpListener
 
         private class SessionState
         {
-            public SessionState(HttpListenerServer server, Action<Request, Response> sessionReceived)
+            public SessionState(HttpListenerServer server, Action<HttpListenerContext> sessionReceived)
             {
                 Server = server;
                 SessionReceived = sessionReceived;
             }
 
             public readonly HttpListenerServer Server;
-            public readonly Action<Request, Response> SessionReceived;
+            public readonly Action<HttpListenerContext> SessionReceived;
         }
     }
 }

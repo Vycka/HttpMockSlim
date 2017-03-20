@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
 using HttpMockSlim.Handlers;
 using HttpMockSlim.HttpListener;
 using HttpMockSlim.Model;
@@ -84,14 +87,14 @@ namespace HttpMockSlim
                 return handled;
             };
 
-            FuncHandler handler = new FuncHandler(handlerFunc);
+            SimpleFuncHandler handler = new SimpleFuncHandler(handlerFunc);
 
             return Add(handler);
         }
 
         public HttpMock Add(Action<Request, Response> responseFiller)
         {
-            return Add(new FuncHandler((req, resp) => {
+            return Add(new SimpleFuncHandler((req, resp) => {
                 responseFiller(req, resp);
                 return true;
             }));
@@ -108,16 +111,20 @@ namespace HttpMockSlim
 
         #region Handle
 
-        private void SessionReceived(Request request, Response response)
+        private void SessionReceived(HttpListenerContext context)
         {
-            if (!TryHandle(request, response))
+            if (!TryHandle(context))
             {
-                response.StatusCode = 404;
-                response.Body($"Can't find any handlers for this request:\r\n{request}");
+                var notFoundMessage = new MemoryStream(Encoding.UTF8.GetBytes($"Can't find any handlers for this request"));
+
+                context.Response.StatusCode = 404;
+                notFoundMessage.CopyTo(context.Response.OutputStream);
+
+                context.Response.Close();
             }
         }
 
-        private bool TryHandle(Request request, Response response)
+        private bool TryHandle(HttpListenerContext context)
         {
             bool handled = false;
 
@@ -125,7 +132,7 @@ namespace HttpMockSlim
             // Doing conversion breaks first-added-first-tested order
             for (int i = 0; i < _handlers.Count; i++)
             {
-                if (_handlers[i].Handle(request, response))
+                if (_handlers[i].Handle(context))
                 {
                     handled = true;
                     break;

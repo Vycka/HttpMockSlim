@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using HttpMockSlim.Model;
 
 namespace HttpMockSlim
@@ -7,7 +8,7 @@ namespace HttpMockSlim
     {
         bool IsRunning { get; }
 
-        void Start(string uriPrefix, Action<Request, Response> sessionReceived);
+        void Start(string uriPrefix, Action<HttpListenerContext> sessionReceived);
 
         void Stop();
     }

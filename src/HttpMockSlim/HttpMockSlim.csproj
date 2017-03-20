@@ -34,7 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Handlers\FuncHandler.cs" />
+    <Compile Include="Handlers\SimpleFuncHandler.cs" />
     <Compile Include="HttpListener\HttpListenerServer.cs" />
     <Compile Include="HttpMock.cs" />
     <Compile Include="IHttpHandlerMock.cs" />
