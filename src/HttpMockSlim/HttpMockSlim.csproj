@@ -34,6 +34,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ByteArrayExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Handlers\FilteredHandlerBase.cs" />
+    <Compile Include="Handlers\FuncHandler.cs" />
     <Compile Include="Handlers\SimpleFuncHandler.cs" />
     <Compile Include="HttpListener\HttpListenerServer.cs" />
     <Compile Include="HttpMock.cs" />

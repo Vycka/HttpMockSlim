@@ -43,7 +43,6 @@ namespace HttpMockSlim.HttpListener
             _running = false;
 
             _httpServer.Stop();
-            //_httpServer = null;
         }
 
         #endregion
@@ -76,22 +75,20 @@ namespace HttpMockSlim.HttpListener
             state.SessionReceived(context);
         }
 
-
         #endregion
 
         #region IDisposable
 
-        public void Dispose()
+        ~HttpListenerServer()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
+            Dispose();
         }
 
-        protected virtual void Dispose(bool disposing)
+        public void Dispose()
         {
             Stop();
-            _httpServer = null;
+
+            GC.SuppressFinalize(this);
         }
 
         #endregion

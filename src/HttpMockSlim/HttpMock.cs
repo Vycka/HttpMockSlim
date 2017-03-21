@@ -70,6 +70,8 @@ namespace HttpMockSlim
 
         #region Public handlers setup
 
+        // TODO: Redesign Add's. Move more stuff to IHttpHandlerMock.
+
         public HttpMock Add(string method, string relativePath, Action<Request, Response> responseFiller)
         {
             Func<Request, Response, bool> handlerFunc = (request, response) =>
