@@ -132,7 +132,7 @@ namespace HttpMockSlim
             // Doing conversion breaks first-added-first-tested order
             for (int i = 0; i < _handlers.Count; i++)
             {
-                if (_handlers[i].Handle(context))
+                if (SafeHandle(_handlers[i], context))
                 {
                     handled = true;
                     break;
@@ -142,6 +142,18 @@ namespace HttpMockSlim
             return handled; 
         }
 
+        private static bool SafeHandle(IHttpHandlerMock handler, HttpListenerContext context)
+        {
+            try
+            {
+                return handler.Handle(context);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         #endregion
 
         #region IDisposable
@@ -149,13 +161,12 @@ namespace HttpMockSlim
         public void Dispose()
         {
             Dispose(true);
-
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             _httpServer.Stop();
+            GC.SuppressFinalize(this);
         }
 
         #endregion
