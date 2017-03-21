@@ -1,8 +1,8 @@
 @ECHO OFF
 cd %~dp0
 
-SET minorVersion="0.5-beta"
-SET majorVersion="0"
+SET minorVersion="0"
+SET majorVersion="1"
 
 SET projectID=HttpMockSlim
 SET project1="..\\..\src\\%projectID%\\%projectID%.csproj"
