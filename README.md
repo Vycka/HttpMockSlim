@@ -9,7 +9,8 @@ Developed with these requirements in mind:
 * Concurrency
 * Easy to mock responses with funcs or with custom IHttpHandlerMock
 Cons:
-* Currently only StatusCode/ContentType/ResponseBody can be mocked.
+* It is small, so only simplified handler exists - which supports mocking StatusCode/ContentType/ResponseBody.
+* Advanced features require implementing IHttpHandlerMock and handling native c# HttpListenerContext.
 
 ## NuGet
 https://www.nuget.org/packages/Viki.HttpMockSlim
