@@ -8,6 +8,7 @@ Developed with these requirements in mind:
 * No dependencies on other nugets
 * Concurrency
 * Easy to mock responses with funcs or with custom IHttpHandlerMock
+
 Cons:
 * It is small, so only simplified handler exists - which supports mocking StatusCode/ContentType/ResponseBody.
 * Advanced features require implementing IHttpHandlerMock and handling native c# HttpListenerContext.
