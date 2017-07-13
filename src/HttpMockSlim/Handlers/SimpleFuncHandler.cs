@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
+using System.Text;
+using HttpMockSlim.Extensions;
 using HttpMockSlim.Model;
 
 namespace HttpMockSlim.Handlers
@@ -46,7 +49,8 @@ namespace HttpMockSlim.Handlers
                 using (Stream body = clientRequest.InputStream)
                 using (StreamReader reader = new StreamReader(body, clientRequest.ContentEncoding))
                 {
-                    result.Body = reader.ReadToEnd();
+                    string content = clientRequest.Headers["Content-Encoding"];
+                    result.Body = content == "gzip" ? reader.BaseStream.DecompressStream() : reader.ReadToEnd();
                 }
             }
 
