@@ -57,7 +57,7 @@ namespace HttpMockSlim.Playground.Handlers
 
         protected virtual void HandlePut(HttpListenerContext context)
         {
-            // Don't forget to all, what was sent anyway
+            // Don't forget to read all what was sent anyway
             var result = context.Request.InputStream.ReadAllBytes();
 
             WriteResponse(context, new StreamGenerator(0, 0));

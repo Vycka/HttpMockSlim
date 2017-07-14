@@ -5,15 +5,15 @@ using HttpMockSlim.Playground.Handlers;
 
 namespace HttpMockSlim.Playground
 {
-    partial class Program
+    class Program
     {
-        private static readonly string _hostUrl = "http://localhost:8080/";
+        
 
         static void Main()
         {
             // ### Starting the server ###
             HttpMock httpMock = new HttpMock();
-            httpMock.Start(_hostUrl);
+            httpMock.Start("http://localhost:8080/");
 
 
             // ### Seting up handlers ###

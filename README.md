@@ -33,7 +33,7 @@ https://www.nuget.org/packages/Viki.HttpMockSlim
 ```cs
 // ### Starting the server ###
 HttpMock httpMock = new HttpMock();
-httpMock.Start(_hostUrl);
+httpMock.Start("http://localhost:8080/");
 
 
 // ### Seting up handlers ###
@@ -100,9 +100,6 @@ public class SwiftAuthMock : FilteredHandlerBase
             throw new ArgumentNullException(nameof(fakeSwiftPath));
                 
         _fakeSwiftPath = fakeSwiftPath;
-
-        if (_fakeSwiftPath.StartsWith("/"))
-            _fakeSwiftPath = _fakeSwiftPath.Substring(1);
     }
 
     protected override bool HandleInner(HttpListenerContext context)
@@ -114,7 +111,7 @@ public class SwiftAuthMock : FilteredHandlerBase
 
         context.Response.SendChunked = true;
         context.Response.AddHeader("X-Auth-Token", "fifty_shades_of_mocked_passkey");
-        context.Response.AddHeader("X-Storage-Url", $"{context.Request.RawUrl}{_fakeSwiftPath}");
+        context.Response.AddHeader("X-Storage-Url", $"{context.Request.Url.Scheme}://{context.Request.Url.Authority}{_fakeSwiftPath}");
 
         context.Response.Close();
 
