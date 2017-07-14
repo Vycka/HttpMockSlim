@@ -13,6 +13,7 @@ namespace HttpMockSlim.Handlers
         {
             if (funcHandler == null)
                 throw new ArgumentNullException(nameof(funcHandler));
+
             _funcHandler = funcHandler;
         }
 

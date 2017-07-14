@@ -8,6 +8,8 @@ namespace HttpMockSlim.Handlers
         private readonly string _method;
         private readonly string _path;
 
+        public StringComparison ComparsionType { get; set; } = StringComparison.InvariantCulture;
+
         protected FilteredHandlerBase(string method, string path)
         {
             if (method == null)
@@ -24,17 +26,15 @@ namespace HttpMockSlim.Handlers
             HttpListenerRequest request = context.Request;
             bool result = false;
 
-            if (request.HttpMethod.Equals(_method, StringComparison.InvariantCulture) &&
-                request.RawUrl.Equals(_path, StringComparison.InvariantCulture))
+            if (request.HttpMethod.Equals(_method, ComparsionType) &&
+                request.RawUrl.Equals(_path, ComparsionType))
             {
-                HandleInner(context);
-
-                result = true;
+                result = HandleInner(context);
             }
 
             return result;
         }
 
-        protected abstract void HandleInner(HttpListenerContext context);
+        protected abstract bool HandleInner(HttpListenerContext context);
     }
 }

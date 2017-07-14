@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using HttpMockSlim.Handlers;
+using HttpMockSlim.Handlers.Internal;
 using HttpMockSlim.HttpListener;
 using HttpMockSlim.Model;
 
@@ -15,6 +16,7 @@ namespace HttpMockSlim
 
         private readonly IHttpServer _httpServer;
         private readonly List<IHttpHandlerMock> _handlers;
+        private readonly IHttpHandlerMock _defaultHandler = new NotFoundResponseHandler();
 
         #endregion
 
@@ -70,28 +72,17 @@ namespace HttpMockSlim
 
         #region Public handlers setup
 
-        // TODO: Redesign Add's. Move more stuff to IHttpHandlerMock.
+        // TODO: Do these Add's really belong here? maybe it should be attached by extension or smth?
 
         public HttpMock Add(string method, string relativePath, Action<Request, Response> responseFiller)
         {
-            Func<Request, Response, bool> handlerFunc = (request, response) =>
+            var realHandler = new SimpleFuncHandler((request, response) =>
             {
-                bool handled = false;
+                responseFiller(request, response);
+                return true;
+            });
 
-                if (request.RawUrl.Equals(relativePath, StringComparison.InvariantCulture) &&
-                    request.Method.Equals(method, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    responseFiller(request, response);
-
-                    handled = true;
-                }
-
-                return handled;
-            };
-
-            SimpleFuncHandler handler = new SimpleFuncHandler(handlerFunc);
-
-            return Add(handler);
+            return Add(new FilteredHandlerWrapper(method, relativePath, realHandler));
         }
 
         public HttpMock Add(Action<Request, Response> responseFiller)
@@ -117,12 +108,7 @@ namespace HttpMockSlim
         {
             if (!TryHandle(context))
             {
-                var notFoundMessage = new MemoryStream(Encoding.UTF8.GetBytes($"Can't find any handlers for this request"));
-
-                context.Response.StatusCode = 404;
-                notFoundMessage.CopyTo(context.Response.OutputStream);
-
-                context.Response.Close();
+                _defaultHandler.Handle(context);
             }
         }
 

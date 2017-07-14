@@ -37,8 +37,10 @@
     <Compile Include="Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Handlers\FilteredHandlerWrapper.cs" />
     <Compile Include="Handlers\FilteredHandlerBase.cs" />
     <Compile Include="Handlers\FuncHandler.cs" />
+    <Compile Include="Handlers\Internal\NotFoundResponseHandler.cs" />
     <Compile Include="Handlers\SimpleFuncHandler.cs" />
     <Compile Include="HttpListener\HttpListenerServer.cs" />
     <Compile Include="HttpMock.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="Utils\Memset.cs" />
     <Compile Include="Utils\StreamGenerator.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

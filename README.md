@@ -16,26 +16,195 @@ Cons:
 ## NuGet
 https://www.nuget.org/packages/Viki.HttpMockSlim
 
-## Playground Program.cs
+## Examples / HttpMockSlim.Playground
+
+### app.config
+* Don't .NET connection limiting features if want more concurrency
+```xml
+    <system.net>
+        <connectionManagement>
+            <add address="*" maxconnection="100" /> <!-- By default afaik is 2 -->
+        </connectionManagement>
+    </system.net>
+```
+
+### Program.cs 
 ```cs
-static void Main()
+// ### Starting the server ###
+HttpMock httpMock = new HttpMock();
+httpMock.Start(_hostUrl);
+
+
+// ### Seting up handlers ###
+// ! Server will try to check requests against each handler in registered order, until first handler processes it.
+// --- Mocked swift storage ---
+httpMock.Add(new SwiftAuthMock("/fake-swift/"));
+httpMock.Add(new FakeStorageHandler("/fake-swift/"));
+
+
+
+// --- Simplified & filtered (by HTTP method & path) func handlers ---
+httpMock.Add("GET", "/sleep", (request, response) =>
 {
-    HttpMock httpMock = new HttpMock();
-    httpMock.Start("http://localhost:50000/");
+    Thread.Sleep(2000);
+    response.SetBody($"{request}\r\nSlept like a baby!");
+});
+httpMock.Add("GET", "/", (request, response) => response.SetBody($"{request}\r\nThe root is strong with this one!"));
 
-    httpMock.Add("GET", "/test", (request, response) =>
+
+
+// --- Other Random examples ---
+// * Another low level example
+httpMock.Add(new LowLevelExample());
+// * This handler will handle all requests, since it doesn't have a filter
+httpMock.Add((request, response) => response.SetBody($"{request}\r\rGotta catch them all!"));
+// * This one will never be activated, because "Gotta catch them all!" will always handle it.
+httpMock.Add("GET", "/will-not-work", (request, response) => response.SetBody($"{request}\r\nBOOO!"));
+            
+
+Console.WriteLine("Enter to exit...");
+Console.ReadLine();
+```
+
+### Custom handlers
+
+```cs
+public class LowLevelExample : IHttpHandlerMock
+{
+    // Lets handle all DELETE's
+    public bool Handle(HttpListenerContext context)
     {
-        Thread.Sleep(3000);
-        response.Body($"{request}\r\nFoo!");
-    });
+        if (context.Request.HttpMethod != "DELETE")
+            return false;
 
-    httpMock.Add("GET", "/", (request, response) => response.Body($"{request}\r\nWoah!"));
+        context.Response.StatusCode = 200;
+        context.Response.ContentType = "text/plain";
 
-    httpMock.Add((request, response) => response.Body($"{request}\r\rMini Wild!"));
+        new StreamGenerator(256, 'A').CopyTo(context.Response.OutputStream);
 
-    httpMock.Add("GET", "/test", (request, response) => response.Body($"{request}\r\nBOOO!"));
+        // One must not forget to close it, as .NET can decide to send the data only after Close().
+        context.Response.Close();
 
-    Console.WriteLine("Enter to exit...");
-    Console.ReadLine();
+        return true;
+    }
+}
+
+public class SwiftAuthMock : FilteredHandlerBase
+{
+    private readonly string _fakeSwiftPath;
+
+    public SwiftAuthMock(string fakeSwiftPath) : base("GET", "/auth")
+    {
+        if (fakeSwiftPath == null)
+            throw new ArgumentNullException(nameof(fakeSwiftPath));
+                
+        _fakeSwiftPath = fakeSwiftPath;
+
+        if (_fakeSwiftPath.StartsWith("/"))
+            _fakeSwiftPath = _fakeSwiftPath.Substring(1);
+    }
+
+    protected override bool HandleInner(HttpListenerContext context)
+    {
+        // No idea if this response is valid for Swift RFC. but it works :)
+
+        context.Response.StatusCode = 200;
+        context.Response.ContentType = "text/plain";
+
+        context.Response.SendChunked = true;
+        context.Response.AddHeader("X-Auth-Token", "fifty_shades_of_mocked_passkey");
+        context.Response.AddHeader("X-Storage-Url", $"{context.Request.RawUrl}{_fakeSwiftPath}");
+
+        context.Response.Close();
+
+        return true;
+    }
+}
+
+public class FakeStorageHandler : IHttpHandlerMock
+{
+    protected readonly string PathBase;
+
+    public FakeStorageHandler(string pathBase)
+    {
+        if (pathBase == null)
+            throw new ArgumentNullException(nameof(pathBase));
+
+        PathBase = pathBase;
+    }
+
+    public bool Handle(HttpListenerContext context)
+    {
+        bool handled = false;
+        HttpListenerRequest request = context.Request;
+
+        if (request.RawUrl.StartsWith(PathBase, StringComparison.InvariantCulture))
+        {
+            handled = true;
+
+            switch (request.HttpMethod)
+            {
+                case "GET":
+                    HandleGet(context);
+                    break;
+
+                case "PUT":
+                    HandlePut(context);
+                    break;
+
+                case "DELETE":
+                    HandleDelete(context);
+                    break;
+
+                default:
+                    handled = false;
+                    break;
+            }
+        }
+
+        return handled;
+    }
+
+    protected virtual void HandleGet(HttpListenerContext context)
+    {
+        WriteResponse(context, new StreamGenerator(16, '#'));
+    }
+
+    protected virtual void HandlePut(HttpListenerContext context)
+    {
+        // Don't forget to all, what was sent anyway
+        var result = context.Request.InputStream.ReadAllBytes();
+
+        WriteResponse(context, new StreamGenerator(0, 0));
+    }
+
+    protected virtual void HandleDelete(HttpListenerContext context)
+    {
+        WriteResponse(context, new StreamGenerator(0, 0));
+    }
+
+    protected static void WriteResponse(HttpListenerContext context, int statusCode)
+    {
+        HttpListenerResponse response = context.Response;
+
+        response.StatusCode = statusCode;
+        response.ContentType = "text/plain";
+        response.SendChunked = true;
+
+        response.Close();
+    }
+
+    protected static void WriteResponse(HttpListenerContext context, Stream body)
+    {
+        HttpListenerResponse response = context.Response;
+
+        response.StatusCode = 200;
+        response.ContentType = "text/plain";
+        response.SendChunked = true;
+
+        body.CopyTo(response.OutputStream);
+
+        response.Close();
+    }
 }
 ```
