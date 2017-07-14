@@ -14,7 +14,7 @@ Cons:
 * Advanced features require implementing IHttpHandlerMock and handling native c# HttpListenerContext.
 
 ## NuGet
-https://www.nuget.org/packages/Viki.HttpMockSlim
+https://www.nuget.org/packages/Viki.HttpMockSlim `Install-Package Viki.HttpMockSlim`
 
 ## Examples / HttpMockSlim.Playground
 
@@ -172,7 +172,7 @@ public class FakeStorageHandler : IHttpHandlerMock
 
     protected virtual void HandlePut(HttpListenerContext context)
     {
-        // Don't forget to all, what was sent anyway
+        // Don't forget to read all what was sent anyway
         var result = context.Request.InputStream.ReadAllBytes();
 
         WriteResponse(context, new StreamGenerator(0, 0));
