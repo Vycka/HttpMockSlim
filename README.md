@@ -20,7 +20,7 @@ https://www.nuget.org/packages/Viki.HttpMockSlim
 ## Examples / HttpMockSlim.Playground
 
 ### app.config
-* Don't .NET connection limiting features if want more concurrency
+* Don't forget .NET connection limiting features if want more concurrency
 ```xml
     <system.net>
         <connectionManagement>
