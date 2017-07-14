@@ -222,7 +222,7 @@ namespace HttpMockSlim.LoadTest.Client
         }
 
         /// <summary>
-        /// Builds HttpWebRequest object and makes sure it has logged in adform session.
+        /// Builds HttpWebRequest object.
         /// </summary>
         /// <param name="absoluteUrl">Absolute URL</param>
         /// <param name="requestMethod">Request method (POST/GET/etc..)</param>
