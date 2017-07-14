@@ -4,7 +4,7 @@ Leightweight Http Server.
 * Created to be used in internal load-tests to mock some http services.
 
 Developed with these requirements in mind:
-* Support of concurrent requests.
+* Support for concurrent requests.
 * No admin-rights necessary (unless binding address requires elevated permissions).
 * No dependencies on other nugets.
 * It's a real http server.
