@@ -22,13 +22,14 @@ namespace HttpMockSlim.LoadTest
 
             LoadRunnerSettings settings = new LoadRunnerSettings()
                 .SetScenario<Scenario>()
-                .SetLimits(new TimeLimit(TimeSpan.FromSeconds(5)))
+                .SetLimits(new TimeLimit(TimeSpan.FromSeconds(6)))
                 .SetThreading(new FixedThreadCount(4));
 
             HistogramAggregator aggregator = new HistogramAggregator()
-                .Add(new TimeDimension(TimeSpan.FromSeconds(1)) {TimeSelector = result => result.IterationStarted})
+                .Add(new TimeDimension(TimeSpan.FromSeconds(2)))
                 .Add(new CountMetric(Checkpoint.Names.Setup, Checkpoint.Names.TearDown))
-                .Add(new PercentileMetric(new [] { 0.95, 0.99, 1 }, new []{ Checkpoint.Names.Setup, Checkpoint.Names.TearDown, Checkpoint.Names.IterationStart } ));
+                .Add(new PercentileMetric(new [] { 0.95, 0.99, 1 }, new []{ Checkpoint.Names.Setup, Checkpoint.Names.TearDown, Checkpoint.Names.IterationStart } ))
+                .Add(new TransactionsPerSecMetric());
 
             LoadRunnerEngine engine = LoadRunnerEngine.Create(settings, aggregator);
             engine.Run();
@@ -43,46 +44,27 @@ namespace HttpMockSlim.LoadTest
 }
 
 /*
-[
-  {
-    "Time (s)": "0",
-    "Count: ITERATION_START": 2581,
-    "Count: ITERATION_END": 2581,
-    "95%: ITERATION_END": 3,
-    "99%: ITERATION_END": 5,
-    "100%: ITERATION_END": 59
-  },
-  {
-    "Time (s)": "1",
-    "Count: ITERATION_START": 2659,
-    "Count: ITERATION_END": 2659,
-    "95%: ITERATION_END": 3,
-    "99%: ITERATION_END": 5,
-    "100%: ITERATION_END": 26
-  },
-  {
-    "Time (s)": "2",
-    "Count: ITERATION_START": 3294,
-    "Count: ITERATION_END": 3294,
-    "95%: ITERATION_END": 2,
-    "99%: ITERATION_END": 3,
-    "100%: ITERATION_END": 3
-  },
-  {
-    "Time (s)": "3",
-    "Count: ITERATION_START": 3324,
-    "Count: ITERATION_END": 3324,
-    "95%: ITERATION_END": 2,
-    "99%: ITERATION_END": 3,
-    "100%: ITERATION_END": 4
-  },
-  {
-    "Time (s)": "4",
-    "Count: ITERATION_START": 3307,
-    "Count: ITERATION_END": 3307,
-    "95%: ITERATION_END": 2,
-    "99%: ITERATION_END": 3,
-    "100%: ITERATION_END": 3
-  }
-]
+i7 4600U
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+--------------------|
+| Time (s) | Count: ITERATION_START | Count: ITERATION_END | 95%: ITERATION_END | 99%: ITERATION_END | 100%: ITERATION_END |        TPS         |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+--------------------|
+|    0     |          6113          |         6113         |         2          |         3          |         40          | 3062.160096722783  |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+--------------------|
+|    2     |          6577          |         6577         |         2          |         3          |          4          | 3284.7397941206805 |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+--------------------|
+|    4     |          3382          |         3382         |         2          |         3          |          4          | 3249.3139403158098 |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+--------------------|
+
+
+i5 4670
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
+| Time (s) | Count: ITERATION_START | Count: ITERATION_END | 95%: ITERATION_END | 99%: ITERATION_END | 100%: ITERATION_END |        TPS        |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
+|    0     |         10655          |        10655         |         1          |         2          |         28          | 5335.683337534778 |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
+|    2     |         11114          |        11114         |         1          |         2          |         11          | 5554.857491465542 |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
+|    4     |         11656          |        11656         |         1          |         2          |          5          | 5828.311523250918 |
+|----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
+
  */
