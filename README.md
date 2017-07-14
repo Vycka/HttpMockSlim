@@ -4,11 +4,11 @@ Leightweight Http Server.
 * Created to be used in internal load-tests to mock some http services.
 
 Developed with these requirements in mind:
-* Support of concurrent requests
-* No admin-rights necessary (unless binding address requires elevated permissions)
-* No dependencies on other nugets
-* It's a real http server
-* Easy to mock responses with funcs or with custom IHttpHandlerMock
+* Support of concurrent requests.
+* No admin-rights necessary (unless binding address requires elevated permissions).
+* No dependencies on other nugets.
+* It's a real http server.
+* Easy to mock responses with funcs or with custom IHttpHandlerMock.
 
 Cons:
 * It is small, so only simplified handler exists - which supports mocking StatusCode/ContentType/ResponseBody.
