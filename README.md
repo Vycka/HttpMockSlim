@@ -1,12 +1,13 @@
 # HttpMockSlim
 
-Slim and simple  Http Server. 
+Leightweight Http Server. 
 * Created to be used in internal load-tests to mock some http services.
 
 Developed with these requirements in mind:
-* No admin-rights necessary
+* Support of concurrent requests
+* No admin-rights necessary (unless binding address requires elevated permissions)
 * No dependencies on other nugets
-* Concurrency
+* It's a real http server
 * Easy to mock responses with funcs or with custom IHttpHandlerMock
 
 Cons:
