@@ -14,7 +14,8 @@ Cons:
 * Advanced features require implementing IHttpHandlerMock and handling native c# HttpListenerContext.
 
 ## NuGet
-https://www.nuget.org/packages/Viki.HttpMockSlim `Install-Package Viki.HttpMockSlim`
+https://www.nuget.org/packages/Viki.HttpMockSlim 
+* `Install-Package Viki.HttpMockSlim`
 
 ## Examples / HttpMockSlim.Playground
 
