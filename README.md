@@ -24,7 +24,7 @@ https://www.nuget.org/packages/Viki.HttpMockSlim
 ```xml
     <system.net>
         <connectionManagement>
-            <add address="*" maxconnection="100" /> <!-- By default afaik is 2 -->
+            <add address="*" maxconnection="100" /> <!-- By default afaik its 2 -->
         </connectionManagement>
     </system.net>
 ```
