@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ByteArrayExtensions.cs" />
+    <Compile Include="Extensions\HttpListenerRequestExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Handlers\FilteredHandlerWrapper.cs" />

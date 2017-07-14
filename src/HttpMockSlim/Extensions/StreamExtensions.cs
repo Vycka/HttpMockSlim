@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using System.Text;
 
 namespace HttpMockSlim.Extensions
 {
@@ -25,20 +24,21 @@ namespace HttpMockSlim.Extensions
         }
 
         /// <summary>
-        /// Decompress a GZip stream and return the content as a string
+        /// Decompresses a GZip stream
         /// </summary>
-        /// <param name="stream">Compressed stream</param>
-        /// <returns>Content of the compressed stream</returns>
-        public static string DecompressStream(this Stream stream)
+        /// <param name="stream">GZip compressed stream</param>
+        /// <returns>Decompressed stream</returns>
+        public static Stream DecompressGZip(this Stream stream)
         {
-            var buffer = new byte[1024];
-
             using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
             {
-                gZipStream.Read(buffer, 0, buffer.Length);
-            }
+                MemoryStream result = new MemoryStream();
 
-            return Encoding.UTF8.GetString(buffer);
+                gZipStream.CopyTo(result);
+
+                result.Seek(0, SeekOrigin.Begin);
+                return result;
+            }
         }
     }
 }

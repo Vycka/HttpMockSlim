@@ -5,13 +5,12 @@ namespace HttpMockSlim.Handlers.Internal
 {
     internal class NotFoundResponseHandler : SimpleFuncHandler
     {
-        private static readonly string _message = "Can't find any handlers for this request";
+        private static readonly byte[] _message = Encoding.UTF8.GetBytes("Can't find any handlers for this request");
 
         public NotFoundResponseHandler() : base((request, response) =>
         {
-            new MemoryStream(Encoding.UTF8.GetBytes(_message)).CopyTo(response.Body);
+            response.Body = new MemoryStream(_message);
             response.StatusCode = 404;
-
             return true;
         })
         {

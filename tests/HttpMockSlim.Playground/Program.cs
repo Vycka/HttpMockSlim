@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using HttpMockSlim.Playground.Handlers;
 
@@ -6,7 +7,7 @@ namespace HttpMockSlim.Playground
 {
     partial class Program
     {
-        private static readonly string _hostUrl = "http://localhost:8000/";
+        private static readonly string _hostUrl = "http://localhost:8080/";
 
         static void Main()
         {

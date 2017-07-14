@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 using HttpMockSlim.Handlers;
 using HttpMockSlim.Handlers.Internal;
 using HttpMockSlim.HttpListener;
@@ -136,7 +134,7 @@ namespace HttpMockSlim
             {
                 return handler.Handle(context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
