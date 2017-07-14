@@ -1,7 +1,7 @@
 # HttpMockSlim
 
-Slim and simple  Http Server Mock.
-Still in development, created to be used in internal load-tests to mock some http services
+Slim and simple  Http Server. 
+* Created to be used in internal load-tests to mock some http services.
 
 Developed with these requirements in mind:
 * No admin-rights necessary
