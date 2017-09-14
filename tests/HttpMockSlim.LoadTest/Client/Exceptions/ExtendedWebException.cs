@@ -17,7 +17,7 @@ namespace HttpMockSlim.LoadTest.Client.Exceptions
             RequestResult = requestResult;
         }
 
-        // Overrided message property, because it's only used in Adform.Reporting.QA atm, and doing workaround here is just quicker for the time being.
+        // Overrided message property, just for easier debugging
         public override string Message => ToString();
 
         public override string ToString()

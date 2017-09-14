@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Handlers\AnotherLowLevelExample.cs" />
     <Compile Include="Handlers\FakeStorageHandler.cs" />
+    <Compile Include="Handlers\HandleAll.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Handlers\SwiftAuthMock.cs" />
