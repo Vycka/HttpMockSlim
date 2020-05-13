@@ -25,7 +25,6 @@ namespace HttpMockSlim.Handlers
 
             bool handled = _funcHandler(request, response);
 
-
             if (handled)
             {
                 WriteResponse(context.Response, response);
@@ -46,10 +45,13 @@ namespace HttpMockSlim.Handlers
             {
                 Stream requestStream = clientRequest.InputStream;
 
-                if (clientRequest.IsGZipped())
-                    requestStream = requestStream.DecompressGZip();
+                if (requestStream != null)
+                {
+                    if (clientRequest.IsGZipped())
+                        requestStream = requestStream.DecompressGZip();
 
-                result.Body = requestStream.ReadAll();
+                    result.Body = requestStream?.ReadAll();
+                }
             }
 
             return result;

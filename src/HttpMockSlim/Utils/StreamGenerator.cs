@@ -11,6 +11,8 @@ namespace HttpMockSlim.Utils
         private readonly long _maxSize;
         private readonly byte _fillValue;
 
+        private long _position = 0;
+
         /// <summary>
         /// Create stream
         /// </summary>
@@ -27,43 +29,33 @@ namespace HttpMockSlim.Utils
         /// </summary>
         /// <param name="maxSize">Length of stream</param>
         /// <param name="fillValue">value to fill</param>
-        public StreamGenerator(long maxSize, char fillValue) : this(maxSize, (byte)fillValue) { }
-        public override void Flush()
-        {
-        }
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotImplementedException();
-        }
-        public override void SetLength(long value)
-        {
-            throw new NotImplementedException();
-        }
+        public StreamGenerator(long maxSize, char fillValue) : this(maxSize, Convert.ToByte(fillValue)) { }
+
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (Position >= _maxSize)
+            if (_position >= _maxSize)
                 return 0;
-            if ((int)Position + count > _maxSize)
-                count = (int)(_maxSize - Position);
-            Position += count;
+            if ((int)_position + count > _maxSize)
+                count = (int)(_maxSize - _position);
+            _position += count;
 
             System.Runtime.CompilerServices.Unsafe.InitBlock(ref buffer[offset], _fillValue, Convert.ToUInt32(count));
 
             return count;
         }
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotImplementedException();
-        }
+
+        public override void Flush() { }
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => false;
-
-        public override long Length
+        public override long Length => throw new NotSupportedException();
+        public override long Position
         {
-            get { throw new NotSupportedException("Length explicitly not given for streaming"); }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
-
-        public override long Position { get; set; }
     }
 }

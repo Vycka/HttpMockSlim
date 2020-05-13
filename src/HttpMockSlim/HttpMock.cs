@@ -116,13 +116,23 @@ namespace HttpMockSlim
 
             // ReSharper disable once ForCanBeConvertedToForeach
             // Doing conversion breaks first-added-first-tested order
-            for (int i = 0; i < _handlers.Count; i++)
+            try
             {
-                if (SafeHandle(_handlers[i], context))
+                for (int i = 0; i < _handlers.Count; i++)
                 {
-                    handled = true;
-                    break;
+                    if (_handlers[i].Handle(context))
+                    {
+                        handled = true;
+                        break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                //Console.WriteLine(e.ToString());
+
+                context.Response.Close();
+                handled = true;
             }
 
             return handled; 

@@ -17,8 +17,8 @@ Cons:
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Vycka/HttpMockSlim</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vycka/HttpMockSlim</RepositoryUrl>
-    <PackageReleaseNotes>Porting to .NET Standard</PackageReleaseNotes>
-    <Version>2.0.1-preview</Version>
+    <PackageReleaseNotes>Added CombinedStream</PackageReleaseNotes>
+    <Version>2.0.2-preview</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

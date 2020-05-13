@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Viki.LoadRunner.Engine;
 using Viki.LoadRunner.Engine.Aggregators;
@@ -42,7 +43,9 @@ namespace HttpMockSlim.LoadTest
             //builder.BuildUi(new ScenarioValidator(new ScenarioFactory(typeof(Scenario)))).Run();
             builder.Build().Run();
 
-            string results = JsonConvert.SerializeObject(aggregator.BuildResultsObjects(), Formatting.Indented);
+            object[] resultsObj = aggregator.BuildResultsObjects().ToArray();
+            string results = String.Join(Environment.NewLine, resultsObj.SerializeToCsv());
+            
 
             Console.WriteLine(results);
 
@@ -75,4 +78,14 @@ i5 4670
 |    4     |         11656          |        11656         |         1          |         2          |          5          | 5828.311523250918 |
 |----------+------------------------+----------------------+--------------------+--------------------+---------------------+-------------------|
 
- */
+i9 9900K
++----------+------------------+----------------+----------------+-----------------+-------+
+| Time (s) | Count: Iteration | 95%: Iteration | 99%: Iteration | 100%: Iteration |  TPS  |
++----------+------------------+----------------+----------------+-----------------+-------+
+|        0 |            15279 |              1 |              2 |              32 |  7649 |
+|        2 |            16161 |              1 |              2 |               6 |  8078 |
+|        4 |            16419 |              1 |              2 |               3 |  8207 |
++----------+------------------+----------------+----------------+-----------------+-------+
+
+https://ozh.github.io/ascii-tables/ (it doesn't parse "complex_quoted" types)
+*/

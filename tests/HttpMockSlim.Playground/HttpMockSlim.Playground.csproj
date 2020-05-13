@@ -36,6 +36,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Handlers\AnotherLowLevelExample.cs" />
@@ -47,10 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\HttpMockSlim\HttpMockSlim.csproj">
-      <Project>{bb0e3c69-7763-4121-86c2-b94e8396c5ff}</Project>
+      <Project>{1c29654b-ac8c-499c-8fa4-ba84329b34c3}</Project>
       <Name>HttpMockSlim</Name>
     </ProjectReference>
   </ItemGroup>
