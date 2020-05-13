@@ -46,7 +46,9 @@ namespace HttpMockSlim.Utils
             if ((int)Position + count > _maxSize)
                 count = (int)(_maxSize - Position);
             Position += count;
-            buffer.Memset(_fillValue, count, offset);
+
+            System.Runtime.CompilerServices.Unsafe.InitBlock(ref buffer[offset], _fillValue, Convert.ToUInt32(count));
+
             return count;
         }
         public override void Write(byte[] buffer, int offset, int count)
