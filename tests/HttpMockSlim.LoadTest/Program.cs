@@ -4,10 +4,15 @@ using Viki.LoadRunner.Engine;
 using Viki.LoadRunner.Engine.Aggregators;
 using Viki.LoadRunner.Engine.Aggregators.Dimensions;
 using Viki.LoadRunner.Engine.Aggregators.Metrics;
-using Viki.LoadRunner.Engine.Executor.Context;
-using Viki.LoadRunner.Engine.Settings;
-using Viki.LoadRunner.Engine.Strategies.Limit;
-using Viki.LoadRunner.Engine.Strategies.Threading;
+using Viki.LoadRunner.Engine.Analytics;
+using Viki.LoadRunner.Engine.Core.Factory;
+using Viki.LoadRunner.Engine.Core.Scenario;
+using Viki.LoadRunner.Engine.Strategies;
+using Viki.LoadRunner.Engine.Strategies.Custom.Strategies.Limit;
+using Viki.LoadRunner.Engine.Strategies.Custom.Strategies.Threading;
+using Viki.LoadRunner.Engine.Strategies.Extensions;
+using Viki.LoadRunner.Engine.Validators;
+using Viki.LoadRunner.Tools.Extensions;
 
 namespace HttpMockSlim.LoadTest
 {
@@ -20,19 +25,22 @@ namespace HttpMockSlim.LoadTest
 
             server.Start();
 
-            LoadRunnerSettings settings = new LoadRunnerSettings()
-                .SetScenario<Scenario>()
-                .SetLimits(new TimeLimit(TimeSpan.FromSeconds(6)))
-                .SetThreading(new FixedThreadCount(4));
+
 
             HistogramAggregator aggregator = new HistogramAggregator()
                 .Add(new TimeDimension(TimeSpan.FromSeconds(2)))
                 .Add(new CountMetric(Checkpoint.Names.Setup, Checkpoint.Names.TearDown))
-                .Add(new PercentileMetric(new [] { 0.95, 0.99, 1 }, new []{ Checkpoint.Names.Setup, Checkpoint.Names.TearDown, Checkpoint.Names.IterationStart } ))
+                .Add(new PercentileMetric(0.95, 0.99, 1))
                 .Add(new TransactionsPerSecMetric());
 
-            LoadRunnerEngine engine = LoadRunnerEngine.Create(settings, aggregator);
-            engine.Run();
+            StrategyBuilder builder = new StrategyBuilder()
+                .SetScenario<Scenario>()
+                .SetLimit(new TimeLimit(TimeSpan.FromSeconds(6)))
+                .SetThreading(new FixedThreadCount(4))
+                .SetAggregator(aggregator);
+
+            //builder.BuildUi(new ScenarioValidator(new ScenarioFactory(typeof(Scenario)))).Run();
+            builder.Build().Run();
 
             string results = JsonConvert.SerializeObject(aggregator.BuildResultsObjects(), Formatting.Indented);
 
