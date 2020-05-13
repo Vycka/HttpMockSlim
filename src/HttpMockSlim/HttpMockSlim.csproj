@@ -9,7 +9,6 @@
     <Description>Created to be used in internal load-tests to mock some http services
 Developed with these requirements in mind:
 * No admin-rights necessary
-* No dependencies on other nugets
 * Concurrency
 * Easy to mock responses with funcs or with custom IHttpHandlerMock
 Cons:
