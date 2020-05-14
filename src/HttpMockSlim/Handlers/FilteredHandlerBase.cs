@@ -18,7 +18,7 @@ namespace HttpMockSlim.Handlers
                 throw new ArgumentNullException(nameof(path));
 
             _method = method;
-            _path = path;
+            _path = path.TrimEnd('/');
         }
 
         public bool Handle(HttpListenerContext context)
@@ -27,7 +27,7 @@ namespace HttpMockSlim.Handlers
             bool result = false;
 
             if (request.HttpMethod.Equals(_method, ComparsionType) &&
-                request.RawUrl.Equals(_path, ComparsionType))
+                request.RawUrl.TrimEnd('/').Equals(_path, ComparsionType))
             {
                 result = HandleInner(context);
             }

@@ -12,7 +12,6 @@ namespace HttpMockSlim.Utils
 
         private bool _moveNextResult;
 
-
         /// <summary>
         /// Create new instance of CombinedStream
         /// </summary>
@@ -35,7 +34,6 @@ namespace HttpMockSlim.Utils
                     // ReSharper disable once PossibleNullReferenceException
                     // * We expect here a clean enumerable to be passed in c-tor
                     bytesRead = _enumerator.Current.Read(buffer, offset, count);
-
 
                     if (bytesRead == 0)
                     {
