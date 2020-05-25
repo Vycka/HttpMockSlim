@@ -6,7 +6,6 @@ Leightweight Http Server.
 Developed with these requirements in mind:
 * Support for concurrent requests.
 * No admin-rights necessary (unless binding address requires elevated permissions).
-* No dependencies on other nugets.
 * It's a real http server.
 * Easy to mock responses with funcs or with custom IHttpHandlerMock.
 
