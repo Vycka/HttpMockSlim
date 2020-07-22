@@ -59,18 +59,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\Exceptions\ExtendedWebException.cs" />
-    <Compile Include="Client\SimpleWebRequest.cs" />
-    <Compile Include="Client\Data\Header.cs" />
-    <Compile Include="Client\Data\RequestData.cs" />
-    <Compile Include="Client\Data\RequestResult.cs" />
-    <Compile Include="Client\Data\ResponseData.cs" />
-    <Compile Include="Client\Enums\RequestMethod.cs" />
-    <Compile Include="Client\Enums\SubmitRequestType.cs" />
-    <Compile Include="Client\Utils\Base64.cs" />
-    <Compile Include="Client\Utils\ErrorFormatter.cs" />
-    <Compile Include="Client\Utils\StringExtensions.cs" />
-    <Compile Include="Client\Utils\VerbosePrinter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenario.cs" />

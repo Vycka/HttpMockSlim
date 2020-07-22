@@ -1,7 +1,7 @@
 ﻿using System;
-using HttpMockSlim.LoadTest.Client;
-using HttpMockSlim.LoadTest.Client.Data;
-using HttpMockSlim.LoadTest.Client.Enums;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Viki.LoadRunner.Engine.Core.Scenario.Interfaces;
 
 namespace HttpMockSlim.LoadTest
@@ -9,7 +9,7 @@ namespace HttpMockSlim.LoadTest
     public class Scenario : IScenario
     {
         private static readonly byte[] _a2000Gzipped = Convert.FromBase64String("H4sIAAAAAAAA/3N0HAWjYBSMglEwCkbBUAcAVwDM/9AHAAA=");
-        private static readonly SimpleWebRequest _client = new SimpleWebRequest();
+        private static readonly HttpClient _client = new HttpClient();
 
 
         public void ScenarioSetup(IIteration context)
@@ -22,17 +22,16 @@ namespace HttpMockSlim.LoadTest
 
         public void ExecuteScenario(IIteration context)
         {
-            RequestResult response = _client.Execute(
-                "http://localhost:8080/",
-                "/",
-                RequestMethod.POST,
-                SubmitRequestType.OCTET_STREAM,
-                _a2000Gzipped,
-                new Header("Content-Encoding", "gzip")
-            );
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8080/");
+            request.Content = new ByteArrayContent(_a2000Gzipped);
+            request.Content.Headers.ContentEncoding.Add("gzip");
+            request.Headers.TransferEncodingChunked = true;
 
-            if (response.Response.Data.Length != 2000)
-                throw new Exception(response.Response.Data);
+            HttpResponseMessage response = _client.SendAsync(request).Result;
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseBody);
         }
 
         public void IterationTearDown(IIteration context)
