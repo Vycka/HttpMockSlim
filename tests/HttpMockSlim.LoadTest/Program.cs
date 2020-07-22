@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Newtonsoft.Json;
-using Viki.LoadRunner.Engine;
 using Viki.LoadRunner.Engine.Aggregators;
 using Viki.LoadRunner.Engine.Aggregators.Dimensions;
 using Viki.LoadRunner.Engine.Aggregators.Metrics;
@@ -12,7 +10,6 @@ using Viki.LoadRunner.Engine.Strategies;
 using Viki.LoadRunner.Engine.Strategies.Custom.Strategies.Limit;
 using Viki.LoadRunner.Engine.Strategies.Custom.Strategies.Threading;
 using Viki.LoadRunner.Engine.Strategies.Extensions;
-using Viki.LoadRunner.Engine.Utils;
 using Viki.LoadRunner.Engine.Validators;
 using Viki.LoadRunner.Tools.Extensions;
 
@@ -20,7 +17,7 @@ namespace HttpMockSlim.LoadTest
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             HttpMock server = new HttpMock();
             server.Add((request, response) =>
@@ -31,15 +28,18 @@ namespace HttpMockSlim.LoadTest
             server.Start();
 
 
-
             HistogramAggregator aggregator = new HistogramAggregator()
                 .Add(new TimeDimension(TimeSpan.FromSeconds(5)))
                 .Add(new FuncMetric<int>("Thread Count", 0, (i, result) => Math.Max(i, result.CreatedThreads)))
                 .Add(new CountMetric(Checkpoint.NotMeassuredCheckpoints))
-                .Add(new PercentileMetric(0.99, 0.9999, 1))
+                .Add(
+                    new PercentileMetric(0.99, 0.9999, 1),
+                    // , => . due to ASCII table generator limitations
+                    row => row.Select(v => new Val(v.Key.Replace(",","."), v.Value))
+                )
                 .Add(
                     new TransactionsPerSecMetric(),
-                    // converting to int due to ASCII table generator limitations
+                    // converting to int (removing , by removing fraction) due to ASCII table generator limitations
                     row => row.Select(v => new Val(v.Key, Convert.ToInt32(v.Value))) 
                 )
                 .Add(new ErrorCountMetric(false));
@@ -56,9 +56,7 @@ namespace HttpMockSlim.LoadTest
             object[] resultsObj = aggregator.BuildResultsObjects().ToArray();
             string results = String.Join(Environment.NewLine, resultsObj.SerializeToCsv());
             
-
             Console.WriteLine(results);
-
             Console.ReadLine();
         }
     }
@@ -104,20 +102,16 @@ i9 9900K, but with redesigned scenario:
  * Increased test scenario runtime to give space for adding:
    - Bigger group by time period - 5s instead of 2s
    - Run test with 4 and 8 threads.
-
-
- 
 +----------+--------------+------------------+----------------+-------------------+-----------------+------+
 | Time (s) | Thread Count | Count: Iteration | 99%: Iteration | 99.99%: Iteration | 100%: Iteration | TPS  |
 +----------+--------------+------------------+----------------+-------------------+-----------------+------+
-|        0 |            4 |            32900 |              2 |                19 |              24 | 6583 |
-|        5 |            4 |            33547 |              2 |                 4 |               7 | 6706 |
-|       10 |            4 |            33601 |              2 |                 6 |               7 | 6720 |
-|       15 |            8 |            33446 |              7 |                14 |              16 | 6690 |
-|       20 |            8 |            33020 |              7 |                14 |              16 | 6605 |
-|       25 |            8 |            33361 |              7 |                11 |              14 | 6670 |
+|        0 |            4 |            32538 |              2 |                21 |              25 | 6510 |
+|        5 |            4 |            33548 |              2 |                 6 |               8 | 6709 |
+|       10 |            4 |            33599 |              2 |                 6 |               7 | 6719 |
+|       15 |            8 |            32950 |              7 |                10 |              16 | 6590 |
+|       20 |            8 |            33064 |              7 |                14 |              20 | 6609 |
+|       25 |            8 |            33078 |              7 |                15 |              16 | 6613 |
 +----------+--------------+------------------+----------------+-------------------+-----------------+------+
-
 
 https://ozh.github.io/ascii-tables/ (it doesn't parse "complex_quoted" types)
 */

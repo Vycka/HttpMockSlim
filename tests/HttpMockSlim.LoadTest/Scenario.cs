@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Viki.LoadRunner.Engine.Core.Scenario.Interfaces;
 
 namespace HttpMockSlim.LoadTest
@@ -22,16 +20,22 @@ namespace HttpMockSlim.LoadTest
 
         public void ExecuteScenario(IIteration context)
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8080/");
-            request.Content = new ByteArrayContent(_a2000Gzipped);
-            request.Content.Headers.ContentEncoding.Add("gzip");
-            request.Headers.TransferEncodingChunked = true;
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8080/"))
+            {
+                using (request.Content = new ByteArrayContent(_a2000Gzipped))
+                {
+                    request.Content.Headers.ContentEncoding.Add("gzip");
+                    request.Headers.TransferEncodingChunked = true;
 
-            HttpResponseMessage response = _client.SendAsync(request).Result;
-            string responseBody = response.Content.ReadAsStringAsync().Result;
+                    using (HttpResponseMessage response = _client.SendAsync(request).Result)
+                    {
+                        string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            if (!response.IsSuccessStatusCode)
-                throw new Exception(responseBody);
+                        if (!response.IsSuccessStatusCode)
+                            throw new Exception(responseBody);
+                    }
+                }
+            }
         }
 
         public void IterationTearDown(IIteration context)
