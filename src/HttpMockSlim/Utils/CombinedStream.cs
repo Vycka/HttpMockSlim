@@ -4,12 +4,12 @@ using System.IO;
 
 namespace HttpMockSlim.Utils
 {
+    
     // Took idea from https://stackoverflow.com/questions/3879152/how-do-i-concatenate-two-system-io-stream-instances-into-one
     // Made my version of it.
-    public class CombinedStream : Stream
+    public class CombinedStream : Stream, IDisposablesBag
     {
         private readonly IEnumerator<Stream> _enumerator;
-
         private bool _moveNextResult;
 
         /// <summary>
@@ -18,9 +18,13 @@ namespace HttpMockSlim.Utils
         /// <param name="streams">Streams to be read from. Enumerable most not contain any nulls. (Enumerable will be iterated only as needed, all passed streams (even if not read) will be closed upon dispose)</param>
         public CombinedStream(IEnumerable<Stream> streams)
         {
-            //this._streams = new Queue<Stream>(streams);
             _enumerator = streams.GetEnumerator();
             _moveNextResult = _enumerator.MoveNext();
+        }
+
+        public CombinedStream(params Stream[] streams)
+            : this((IEnumerable<Stream>)streams)
+        {
         }
         
         public override int Read(byte[] buffer, int offset, int count)
@@ -47,6 +51,7 @@ namespace HttpMockSlim.Utils
         }
 
 
+        // Called from Stream's base Dispose
         protected override void Dispose(bool disposing)
         {
             if (_moveNextResult)
@@ -58,6 +63,11 @@ namespace HttpMockSlim.Utils
             }
 
             _enumerator.Dispose();
+
+            foreach (IDisposable disposable in Disposables)
+            {
+                disposable.Dispose();
+            }
         }
 
         public override void Flush() { }
@@ -73,5 +83,7 @@ namespace HttpMockSlim.Utils
             get => throw new NotSupportedException();
             set => throw new NotSupportedException();
         }
+
+        public IList<IDisposable> Disposables { get; } = new List<IDisposable>();
     }
 }

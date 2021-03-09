@@ -17,8 +17,8 @@ Cons:
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Vycka/HttpMockSlim</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vycka/HttpMockSlim</RepositoryUrl>
-    <PackageReleaseNotes>FilterHandlerBase and its implementations will now trim last slash "/" before comparing the path.</PackageReleaseNotes>
-    <Version>2.0.4-preview</Version>
+    <PackageReleaseNotes>Added IDisposablesBag feature for CombinedStream</PackageReleaseNotes>
+    <Version>2.0.5-preview</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

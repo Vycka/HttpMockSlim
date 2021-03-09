@@ -7,8 +7,6 @@ namespace HttpMockSlim.Playground
 {
     class Program
     {
-        
-
         static void Main()
         {
             // ### Starting the server ###
