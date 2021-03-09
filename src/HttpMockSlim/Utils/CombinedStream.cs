@@ -9,24 +9,36 @@ namespace HttpMockSlim.Utils
     // Made my version of it.
     public class CombinedStream : Stream, IDisposablesBag
     {
+        private readonly IList<IDisposable> _disposables;
+
+        private readonly bool _disposeStreams;
         private readonly IEnumerator<Stream> _enumerator;
         private bool _moveNextResult;
 
         /// <summary>
         /// Create new instance of CombinedStream
         /// </summary>
-        /// <param name="streams">Streams to be read from. Enumerable most not contain any nulls. (Enumerable will be iterated only as needed, all passed streams (even if not read) will be closed upon dispose)</param>
-        public CombinedStream(IEnumerable<Stream> streams)
+        /// <param name="streams">Streams to be read from. Enumerable most not contain any nulls. (Enumerable will be iterated only as needed)</param>
+        /// <param name="disposeStreams">Dispose passed streams once CombinedStream receives dispose call</param>
+        public CombinedStream(IEnumerable<Stream> streams, bool disposeStreams)
         {
-            _enumerator = streams.GetEnumerator();
+            _disposeStreams = disposeStreams;
+            _enumerator = streams?.GetEnumerator() ?? throw new ArgumentNullException(nameof(streams));
+
             _moveNextResult = _enumerator.MoveNext();
+            _disposables = new List<IDisposable>();
         }
 
+
+        /// <summary>
+        /// Create new instance of CombinedStream
+        /// </summary>
+        /// <param name="streams">Streams to be read from. Array most not contain any null values. All streams in will be disposed once CombinedStream receives Dispose call</param>
         public CombinedStream(params Stream[] streams)
-            : this((IEnumerable<Stream>)streams)
+            : this(streams, true)
         {
         }
-        
+
         public override int Read(byte[] buffer, int offset, int count)
         {
             int bytesRead = 0;
@@ -42,6 +54,12 @@ namespace HttpMockSlim.Utils
                     if (bytesRead == 0)
                     {
                         _enumerator.Current.Close();
+
+                        if (_disposeStreams)
+                        {
+                            AddDisposable(_enumerator.Current);
+                        }
+
                         _moveNextResult = _enumerator.MoveNext();
                     }
                 } while (bytesRead == 0 && _moveNextResult);
@@ -56,15 +74,20 @@ namespace HttpMockSlim.Utils
         {
             if (_moveNextResult)
             {
-                _enumerator.Current?.Close();
-
-                while (_enumerator.MoveNext())
+                do
+                {
                     _enumerator.Current?.Close();
+
+                    if (_disposeStreams)
+                    {
+                        AddDisposable(_enumerator.Current);
+                    }
+                } while (_enumerator.MoveNext());
             }
 
             _enumerator.Dispose();
 
-            foreach (IDisposable disposable in Disposables)
+            foreach (IDisposable disposable in _disposables)
             {
                 disposable.Dispose();
             }
@@ -84,6 +107,10 @@ namespace HttpMockSlim.Utils
             set => throw new NotSupportedException();
         }
 
-        public IList<IDisposable> Disposables { get; } = new List<IDisposable>();
+
+        public void AddDisposable(IDisposable disposable)
+        {
+            _disposables.Add(disposable);
+        }
     }
 }
