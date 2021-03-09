@@ -87,7 +87,7 @@ namespace HttpMockSlim.Utils
 
             while (_disposables.Count != 0)
             {
-                _disposables.Pop().Dispose();
+                _disposables.Pop()?.Dispose();
             }
         }
 
