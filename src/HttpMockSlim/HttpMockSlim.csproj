@@ -8,6 +8,7 @@
     <Product />
     <Description>Created to be used in internal load-tests to mock some http services
 Developed with these requirements in mind:
+* Uses .net built-in HttpServer
 * No admin-rights necessary
 * Concurrency
 * Easy to mock responses with funcs or with custom IHttpHandlerMock
@@ -18,7 +19,7 @@ Cons:
     <PackageProjectUrl>https://github.com/Vycka/HttpMockSlim</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vycka/HttpMockSlim</RepositoryUrl>
     <PackageReleaseNotes>Fixed CombinedStream disposing order</PackageReleaseNotes>
-    <Version>2.0.7</Version>
+    <Version>2.0.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>

@@ -4,7 +4,6 @@ using System.IO;
 
 namespace HttpMockSlim.Utils
 {
-    
     // Took idea from https://stackoverflow.com/questions/3879152/how-do-i-concatenate-two-system-io-stream-instances-into-one
     // Made my version of it.
     public class CombinedStream : Stream, IDisposablesBag
@@ -19,7 +18,7 @@ namespace HttpMockSlim.Utils
         /// Create new instance of CombinedStream
         /// </summary>
         /// <param name="streams">Streams to be read from. Enumerable most not contain any nulls. (Enumerable will be iterated only as needed)</param>
-        /// <param name="disposeStreams">Dispose passed streams once CombinedStream receives dispose call</param>
+        /// <param name="disposeStreams">Dispose passed streams</param>
         public CombinedStream(IEnumerable<Stream> streams, bool disposeStreams)
         {
             _disposeStreams = disposeStreams;
@@ -33,7 +32,7 @@ namespace HttpMockSlim.Utils
         /// <summary>
         /// Create new instance of CombinedStream
         /// </summary>
-        /// <param name="streams">Streams to be read from. Array most not contain any null values. All streams in will be disposed once CombinedStream receives Dispose call</param>
+        /// <param name="streams">Streams to be read from. Array most not contain any null values. All streams in will be disposed.</param>
         public CombinedStream(params Stream[] streams)
             : this(streams, true)
         {
@@ -57,7 +56,7 @@ namespace HttpMockSlim.Utils
 
                         if (_disposeStreams)
                         {
-                            AddDisposable(_enumerator.Current);
+                            _enumerator.Current.Dispose();
                         }
 
                         _moveNextResult = _enumerator.MoveNext();
@@ -77,17 +76,16 @@ namespace HttpMockSlim.Utils
                 do
                 {
                     _enumerator.Current?.Close();
-
                     if (_disposeStreams)
                     {
-                        AddDisposable(_enumerator.Current);
+                        _enumerator.Current?.Dispose();
                     }
                 } while (_enumerator.MoveNext());
             }
 
             _enumerator.Dispose();
 
-            while (_disposables.Peek() != null)
+            while (_disposables.Count != 0)
             {
                 _disposables.Pop().Dispose();
             }
