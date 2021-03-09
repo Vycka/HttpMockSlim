@@ -9,7 +9,7 @@ namespace HttpMockSlim.Utils
     // Made my version of it.
     public class CombinedStream : Stream, IDisposablesBag
     {
-        private readonly IList<IDisposable> _disposables;
+        private readonly Stack<IDisposable> _disposables;
 
         private readonly bool _disposeStreams;
         private readonly IEnumerator<Stream> _enumerator;
@@ -26,7 +26,7 @@ namespace HttpMockSlim.Utils
             _enumerator = streams?.GetEnumerator() ?? throw new ArgumentNullException(nameof(streams));
 
             _moveNextResult = _enumerator.MoveNext();
-            _disposables = new List<IDisposable>();
+            _disposables = new Stack<IDisposable>();
         }
 
 
@@ -87,9 +87,9 @@ namespace HttpMockSlim.Utils
 
             _enumerator.Dispose();
 
-            foreach (IDisposable disposable in _disposables)
+            while (_disposables.Peek() != null)
             {
-                disposable.Dispose();
+                _disposables.Pop().Dispose();
             }
         }
 
@@ -110,7 +110,7 @@ namespace HttpMockSlim.Utils
 
         public void AddDisposable(IDisposable disposable)
         {
-            _disposables.Add(disposable);
+            _disposables.Push(disposable);
         }
     }
 }
