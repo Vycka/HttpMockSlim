@@ -19,7 +19,7 @@ Cons:
     <PackageProjectUrl>https://github.com/Vycka/HttpMockSlim</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vycka/HttpMockSlim</RepositoryUrl>
     <PackageReleaseNotes>Fixed CombinedStream disposing order</PackageReleaseNotes>
-    <Version>2.0.8</Version>
+    <Version>2.0.9</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>

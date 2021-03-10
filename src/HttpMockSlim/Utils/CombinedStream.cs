@@ -19,7 +19,7 @@ namespace HttpMockSlim.Utils
         /// </summary>
         /// <param name="streams">Streams to be read from. Enumerable most not contain any nulls. (Enumerable will be iterated only as needed)</param>
         /// <param name="disposeStreams">Dispose passed streams</param>
-        public CombinedStream(IEnumerable<Stream> streams, bool disposeStreams)
+        public CombinedStream(IEnumerable<Stream> streams, bool disposeStreams = true)
         {
             _disposeStreams = disposeStreams;
             _enumerator = streams?.GetEnumerator() ?? throw new ArgumentNullException(nameof(streams));
