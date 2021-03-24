@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Specialized;
+using System.IO;
 using System.Net;
 using System.Text;
 using HttpMockSlim.Extensions;
@@ -10,6 +11,7 @@ namespace HttpMockSlim.Model
         public int StatusCode = 200;
         public string ContentType = "text/plain";
         public Stream Body;
+        public WebHeaderCollection Headers;
 
         /// <summary>
         /// Sets body with UTF8 encoding.

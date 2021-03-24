@@ -18,8 +18,8 @@ Cons:
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Vycka/HttpMockSlim</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vycka/HttpMockSlim</RepositoryUrl>
-    <PackageReleaseNotes>Fixed CombinedStream disposing order</PackageReleaseNotes>
-    <Version>2.0.9</Version>
+    <PackageReleaseNotes>Added custom header support for simple wrapper.</PackageReleaseNotes>
+    <Version>2.0.10</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>

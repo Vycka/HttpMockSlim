@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using HttpMockSlim.Playground.Handlers;
 
@@ -36,7 +37,11 @@ namespace HttpMockSlim.Playground
             // * Another low level example
             httpMock.Add(new LowLevelExample());
             // * This handler will handle all requests, since it doesn't have a filter
-            httpMock.Add((request, response) => response.SetBody($"{request}\r\rGotta catch them all!"));
+            httpMock.Add((request, response) =>
+            {
+                response.SetBody($"{request}\r\rGotta catch them all!");
+                response.Headers = new WebHeaderCollection { {"CustomHeader", "wat"} };
+            });
             // * This one will never be activated, because "Gotta catch them all!" will always handle it.
             httpMock.Add("GET", "/will-not-work", (request, response) => response.SetBody($"{request}\r\nBOOO!"));
             

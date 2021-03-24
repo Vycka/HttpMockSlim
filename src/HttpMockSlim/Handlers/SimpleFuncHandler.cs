@@ -38,7 +38,8 @@ namespace HttpMockSlim.Handlers
             Request result = new Request
             {
                 Method = clientRequest.HttpMethod,
-                RawUrl = clientRequest.RawUrl
+                RawUrl = clientRequest.RawUrl,
+                Headers = clientRequest.Headers
             };
 
             if (clientRequest.HasEntityBody)
@@ -62,6 +63,13 @@ namespace HttpMockSlim.Handlers
             httpResponse.StatusCode = response.StatusCode;
             httpResponse.ContentType = response.ContentType;
             httpResponse.SendChunked = true;
+            if (response.Headers != null)
+            {
+                foreach (string headerKey in response.Headers.AllKeys)
+                {
+                    httpResponse.Headers.Add(headerKey, response.Headers[headerKey]);
+                }
+            }
             response.Body.CopyTo(httpResponse.OutputStream);
 
             httpResponse.Close();

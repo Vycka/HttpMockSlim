@@ -6,7 +6,7 @@ namespace HttpMockSlim.Utils
 {
     // Took idea from https://stackoverflow.com/questions/3879152/how-do-i-concatenate-two-system-io-stream-instances-into-one
     // Made my version of it.
-    public class CombinedStream : Stream, IDisposablesBag
+    public class CombinedStream : UnbufferedReadOnlyStreamBase, IDisposablesBag
     {
         private readonly Stack<IDisposable> _disposables;
 
@@ -27,7 +27,6 @@ namespace HttpMockSlim.Utils
             _moveNextResult = _enumerator.MoveNext();
             _disposables = new Stack<IDisposable>();
         }
-
 
         /// <summary>
         /// Create new instance of CombinedStream
@@ -67,7 +66,6 @@ namespace HttpMockSlim.Utils
             return bytesRead;
         }
 
-
         // Called from Stream's base Dispose
         protected override void Dispose(bool disposing)
         {
@@ -90,21 +88,6 @@ namespace HttpMockSlim.Utils
                 _disposables.Pop()?.Dispose();
             }
         }
-
-        public override void Flush() { }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-        public override void SetLength(long value) => throw new NotSupportedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => false;
-        public override long Length => throw new NotSupportedException();
-        public override long Position
-        {
-            get => throw new NotSupportedException();
-            set => throw new NotSupportedException();
-        }
-
 
         public void AddDisposable(IDisposable disposable)
         {
