@@ -70,7 +70,7 @@ namespace HttpMockSlim.Handlers
                     httpResponse.Headers.Add(headerKey, response.Headers[headerKey]);
                 }
             }
-            response.Body.CopyTo(httpResponse.OutputStream);
+            response.Body?.CopyTo(httpResponse.OutputStream);
 
             httpResponse.Close();
         }
