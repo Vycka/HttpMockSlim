@@ -12,6 +12,8 @@ Developed with these requirements in mind:
 Cons:
 * It is small, so only simplified handler exists - which supports mocking StatusCode/ContentType/ResponseBody.
 * Advanced features require implementing IHttpHandlerMock and handling native c# HttpListenerContext.
+* It seems that recently microsoft created their version of host to solve same problems as this nuget is attempting to solve: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-7.0 im yet to checkout how good it is.. but i think its fair to assume that because of it HttpMockSlim might become obsolete soon x]
+
 
 ## NuGet
 https://www.nuget.org/packages/Viki.HttpMockSlim 
